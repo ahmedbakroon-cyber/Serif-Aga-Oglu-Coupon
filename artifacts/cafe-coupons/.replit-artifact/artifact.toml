@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Cafe QR Coupon System"
+version = "1.0.0"
+id = "artifacts/cafe-coupons"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24097
+
+[services.development]
+run = "pnpm --filter @workspace/cafe-coupons run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/cafe-coupons", "run", "build" ]
+publicDir = "artifacts/cafe-coupons/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24097"
+BASE_PATH = "/"

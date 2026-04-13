@@ -1,0 +1,95 @@
+Build a complete web app for a cafe QR coupon system.
+
+Main requirements:
+
+1. The system must support bulk coupon generation, not just one coupon at a time.
+   Example:
+   - generate 20 coupons for 20% off drinks
+   - generate 20 coupons for a free item
+   - generate 20 coupons for a fixed discount
+   Each coupon must have a unique code and a unique QR code, but all coupons in the same batch should share the same visual design.
+
+2. I need an Admin Dashboard where I can create a coupon batch with:
+   - quantity
+   - discount type:
+     - percentage discount
+     - fixed amount discount
+     - free item
+   - discount value
+   - free item name (if needed)
+   - optional expiry date
+   - coupon title text
+   - coupon subtitle text
+   - language (English or Turkish)
+   - background color
+   - cafe logo
+   - optional footer text
+
+3. After creating a batch, the system should generate all coupons automatically and create a print-ready coupon sheet.
+
+4. I need a printable A4 layout that arranges the coupons in a grid, for example:
+   - 4 columns x 5 rows for 20 coupons
+   Each printed coupon should include:
+   - cafe logo
+   - QR code
+   - offer text
+   - optional footer text
+   - brand color background
+   - clean borders or dashed cut lines for easy cutting
+
+5. Important:
+   - each printed coupon may look visually similar
+   - but each coupon must have a different internal unique coupon code in the database
+   - each QR code must link to the correct unique coupon
+
+6. Customer flow:
+   - when a customer scans the QR code, it opens a public page
+   - the page shows the reward or discount details
+   - this does NOT redeem the coupon
+
+7. Staff flow:
+   - there must be a private staff scanner page
+   - staff scans the same QR code
+   - system validates it
+   - if valid, it shows coupon details and a Redeem button
+   - only the staff page can redeem the coupon
+   - once redeemed, the coupon becomes permanently used
+
+8. Coupon list page:
+   - show all coupons
+   - show batch info
+   - show statuses: active / used / expired
+
+9. Database fields should include:
+   - id
+   - batchId
+   - code
+   - discountType
+   - discountValue
+   - freeItemName
+   - displayTitle
+   - displaySubtitle
+   - language
+   - backgroundColor
+   - isUsed
+   - createdAt
+   - redeemedAt
+   - expiresAt
+
+10. Tech stack:
+   - Node.js
+   - Express
+   - SQLite
+   - HTML/CSS/JavaScript
+
+11. Use:
+   - QR code generator library
+   - browser QR scanner library
+
+12. Add:
+   - print stylesheet
+   - PDF-friendly print layout
+   - mobile-friendly UI
+   - clean modern design
+
+13. Include demo seed data and make the project fully runnable in Replit.

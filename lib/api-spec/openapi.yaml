@@ -3,20 +3,25 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Cafe QR Coupon System API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: batches
+    description: Coupon batch operations
+  - name: coupons
+    description: Coupon operations
+  - name: dashboard
+    description: Dashboard summary operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +29,178 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /batches:
+    get:
+      operationId: listBatches
+      tags: [batches]
+      summary: List all coupon batches
+      responses:
+        "200":
+          description: List of batches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Batch"
+    post:
+      operationId: createBatch
+      tags: [batches]
+      summary: Create a new coupon batch with coupons
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBatchBody"
+      responses:
+        "201":
+          description: Batch created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Batch"
+
+  /batches/{batchId}:
+    get:
+      operationId: getBatch
+      tags: [batches]
+      summary: Get a single batch with its coupons
+      parameters:
+        - name: batchId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Batch details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchWithCoupons"
+        "404":
+          description: Batch not found
+
+  /coupons:
+    get:
+      operationId: listCoupons
+      tags: [coupons]
+      summary: List all coupons with optional filters
+      parameters:
+        - name: batchId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, used, expired]
+      responses:
+        "200":
+          description: List of coupons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Coupon"
+
+  /coupons/{code}:
+    get:
+      operationId: getCouponByCode
+      tags: [coupons]
+      summary: Get coupon details by unique code (public)
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Coupon details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CouponPublic"
+        "404":
+          description: Coupon not found
+
+  /coupons/{code}/validate:
+    get:
+      operationId: validateCoupon
+      tags: [coupons]
+      summary: Validate a coupon for staff (shows full details)
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Coupon validation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CouponValidation"
+        "404":
+          description: Coupon not found
+
+  /coupons/{code}/redeem:
+    post:
+      operationId: redeemCoupon
+      tags: [coupons]
+      summary: Redeem a coupon (staff only)
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Coupon redeemed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Coupon"
+        "400":
+          description: Coupon already used or expired
+        "404":
+          description: Coupon not found
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary stats
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Get recent coupon activity
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +211,275 @@ components:
       required:
         - status
 
+    CreateBatchBody:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 100
+        discountType:
+          type: string
+          enum: [percentage, fixed, free_item]
+        discountValue:
+          type: number
+        freeItemName:
+          type: string
+        displayTitle:
+          type: string
+        displaySubtitle:
+          type: string
+        language:
+          type: string
+          enum: [en, tr]
+        backgroundColor:
+          type: string
+        logoUrl:
+          type: string
+        footerText:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+      required:
+        - quantity
+        - discountType
+        - displayTitle
+
+    Batch:
+      type: object
+      properties:
+        id:
+          type: integer
+        quantity:
+          type: integer
+        discountType:
+          type: string
+          enum: [percentage, fixed, free_item]
+        discountValue:
+          type: number
+        freeItemName:
+          type: string
+        displayTitle:
+          type: string
+        displaySubtitle:
+          type: string
+        language:
+          type: string
+        backgroundColor:
+          type: string
+        logoUrl:
+          type: string
+        footerText:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        activeCount:
+          type: integer
+        usedCount:
+          type: integer
+        expiredCount:
+          type: integer
+      required:
+        - id
+        - quantity
+        - discountType
+        - displayTitle
+        - createdAt
+        - activeCount
+        - usedCount
+        - expiredCount
+
+    BatchWithCoupons:
+      type: object
+      properties:
+        id:
+          type: integer
+        quantity:
+          type: integer
+        discountType:
+          type: string
+          enum: [percentage, fixed, free_item]
+        discountValue:
+          type: number
+        freeItemName:
+          type: string
+        displayTitle:
+          type: string
+        displaySubtitle:
+          type: string
+        language:
+          type: string
+        backgroundColor:
+          type: string
+        logoUrl:
+          type: string
+        footerText:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        coupons:
+          type: array
+          items:
+            $ref: "#/components/schemas/Coupon"
+      required:
+        - id
+        - quantity
+        - discountType
+        - displayTitle
+        - createdAt
+        - coupons
+
+    Coupon:
+      type: object
+      properties:
+        id:
+          type: integer
+        batchId:
+          type: integer
+        code:
+          type: string
+        discountType:
+          type: string
+          enum: [percentage, fixed, free_item]
+        discountValue:
+          type: number
+        freeItemName:
+          type: string
+        displayTitle:
+          type: string
+        displaySubtitle:
+          type: string
+        language:
+          type: string
+        backgroundColor:
+          type: string
+        logoUrl:
+          type: string
+        footerText:
+          type: string
+        isUsed:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        redeemedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [active, used, expired]
+      required:
+        - id
+        - batchId
+        - code
+        - discountType
+        - displayTitle
+        - isUsed
+        - createdAt
+        - status
+
+    CouponPublic:
+      type: object
+      properties:
+        code:
+          type: string
+        discountType:
+          type: string
+          enum: [percentage, fixed, free_item]
+        discountValue:
+          type: number
+        freeItemName:
+          type: string
+        displayTitle:
+          type: string
+        displaySubtitle:
+          type: string
+        language:
+          type: string
+        backgroundColor:
+          type: string
+        logoUrl:
+          type: string
+        footerText:
+          type: string
+        status:
+          type: string
+          enum: [active, used, expired]
+        expiresAt:
+          type: string
+          format: date-time
+      required:
+        - code
+        - discountType
+        - displayTitle
+        - status
+
+    CouponValidation:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        coupon:
+          $ref: "#/components/schemas/Coupon"
+        message:
+          type: string
+      required:
+        - valid
+        - message
+
+    DashboardSummary:
+      type: object
+      properties:
+        totalBatches:
+          type: integer
+        totalCoupons:
+          type: integer
+        activeCoupons:
+          type: integer
+        usedCoupons:
+          type: integer
+        expiredCoupons:
+          type: integer
+        redemptionRate:
+          type: number
+      required:
+        - totalBatches
+        - totalCoupons
+        - activeCoupons
+        - usedCoupons
+        - expiredCoupons
+        - redemptionRate
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [created, redeemed, expired]
+        couponCode:
+          type: string
+        batchTitle:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - couponCode
+        - batchTitle
+        - timestamp
