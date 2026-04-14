@@ -1,0 +1,80 @@
+Modify the existing current project only. Do NOT create a new app.
+
+This is a design and branding refinement task for my cafe website.
+
+Cafe Name:
+Şerif Ağa Oğlu
+
+Branding:
+I will provide a logo image. Use this logo across the entire website:
+- header
+- customer pages
+- printable coupons
+- admin pages
+
+Color Palette (important):
+Use a premium cafe style based on:
+- dark brown (#3E2C23 or similar)
+- gold accents (#C8A96A or similar)
+- beige / cream backgrounds (#F5F0E6)
+- white for clean areas
+
+Style Direction:
+- elegant
+- minimal
+- dessert/cafe focused
+- premium but simple
+- clean spacing and modern UI
+
+Tasks:
+
+1. Update the Header:
+- Place the cafe logo clearly
+- Show the cafe name "Şerif Ağa Oğlu"
+- Keep it clean and modern
+
+2. Improve Home Page (keep structure, just refine):
+- Improve hero section (better layout, spacing, typography)
+- Use a dessert/coffee visual feel
+- Improve buttons (Scan Now, etc.)
+- Improve category cards layout (better spacing, rounded edges, shadows)
+
+3. Customer Coupon Page:
+- Show logo at top
+- Add a clean reward card in the center
+- Improve typography and spacing
+- Make it feel premium and simple
+- Do NOT change logic, only improve UI
+
+4. Staff Scanner Page:
+- Keep functionality as is
+- Improve layout clarity
+- Use color feedback:
+  - green for valid
+  - red for invalid
+- Make buttons larger and easier to click
+
+5. Printable Coupon Page:
+- Keep A4 layout
+- Improve coupon card design:
+  - add logo
+  - use brand colors
+  - clean borders or dashed cut lines
+  - elegant minimal design
+- Make it look like a real premium cafe voucher
+
+6. Global Improvements:
+- unify spacing, padding, margins
+- improve typography hierarchy
+- improve button styles
+- use consistent colors across all pages
+- ensure mobile-friendly layout
+
+Important Rules:
+- Do NOT rebuild the app
+- Do NOT remove existing functionality
+- Only refine and improve design and layout
+- Keep everything lightweight and fast
+
+Goal:
+Make the current project look like a real premium cafe website with strong branding.
